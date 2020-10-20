@@ -1,4 +1,5 @@
 require_relative '../config/environment'
+require 'pry'
 
 class AppCLI
     def self.welcome_user
@@ -10,6 +11,7 @@ class AppCLI
         print "Would you like to place an order?(yes/no)\n"
         input = gets.chomp
         if input == "yes"
+            print "Hit this flag if yes works correctly.\n"
             sign_in
         elsif input == "no"
             print "Okay, I'll send you out now.\n"
@@ -43,16 +45,21 @@ class AppCLI
 
     def self.order_create
         #put in all the ice creams that we have, with a row from the ice_creams table for each with their flavors, calories, and price
-        @order = Order.new(user_id: @user.id)
+        if Order.find_by(user_id: @user.id) == nil
+            @order = Order.create(user_id: @user.id)
+        else
+            @order = Order.find_by(user_id: @user.id)
+        end
+        @order.cones_create
         ordering
     end
 
-    def ordering
+    def self.ordering
         print "Here are all our flavors:\n"
         IceCream.all.each {|row| print "#{row.name} | #{row.flavor} | #{row.calories} | #{row.price}\n"}
         print "Which would you like?\n"
         @order.cones << IceCream.find_by(name: gets.chomp)
-        print "Would you like to add to your order?(yes/no)"
+        print "Would you like to add to your order?(yes/no)\n"
         input = gets.chomp
         if input == "yes"
             ordering
@@ -61,25 +68,9 @@ class AppCLI
         end
     end
 
-    def receipt
+    def self.receipt
         print "Here is your order:\n #{@order.cones}\n Have an Amazing day!"
     end
-
-    # def exit_user
-    #     # print "Goodbye #{@user}, and thank you for shopping with (Placeholder name)!"
-    # end
-  
-    # def self.run
-    #     # user = User.create
-
-
-    #     welcome_user
-    #     # order?
-    #     # sign_in
-
-    #     # receipt
-    #     # exit_user
-    # end
 end
 # run
 AppCLI.welcome_user

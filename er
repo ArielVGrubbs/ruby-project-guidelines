@@ -1,0 +1,26 @@
+
+[1mFrom:[0m /mnt/c/Users/ariel/dev/flatiron/labs/Phase 1 Ruby Project/bin/run.rb:31 AppCLI.sign_in:
+
+    [1;34m25[0m: [32mdef[0m [1;36mself[0m.[1;34msign_in[0m
+    [1;34m26[0m:     print [31m[1;31m"[0m[31mPlease enter your username:[1;35m\n[0m[31m[1;31m"[0m[31m[0m
+    [1;34m27[0m:     i1 = gets.chomp
+    [1;34m28[0m:     [32mif[0m i1 != [1;36mnil[0m
+    [1;34m29[0m:         puts [31m[1;31m"[0m[31mWe're here![1;31m"[0m[31m[0m
+    [1;34m30[0m:         @user = [1;34;4mUser[0m.create([35musername[0m: i1)
+ => [1;34m31[0m:         binding.pry
+    [1;34m32[0m:         puts [31m[1;31m"[0m[31mAfter binding.pry[1;31m"[0m[31m[0m
+    [1;34m33[0m:     [32melse[0m
+    [1;34m34[0m:         print [31m[1;31m"[0m[31mSorry, I didn't understand that, could you try again?[1;35m\n[0m[31m[1;31m"[0m[31m[0m
+    [1;34m35[0m:         sign_in
+    [1;34m36[0m:     [32mend[0m
+    [1;34m37[0m:     print [31m[1;31m"[0m[31mStreet address you want your order to be delivered to:[1;35m\n[0m[31m[1;31m"[0m[31m[0m
+    [1;34m38[0m:     i2 = gets.chomp
+    [1;34m39[0m:     @user.address = i2
+    [1;34m40[0m:     print [31m[1;31m"[0m[31mMethod of payment:[1;35m\n[0m[31m Visa[1;35m\n[0m[31m MasterCard[1;35m\n[0m[31m AmericanExpress[1;35m\n[0m[31m[1;31m"[0m[31m[0m
+    [1;34m41[0m:     i3 = gets.chomp
+    [1;34m42[0m:     puts [31m[1;31m"[0m[31mFinished with the sign in[1;31m"[0m[31m[0m
+    [1;34m43[0m:     @user.payment_method = i3
+    [1;34m44[0m:     order_create
+    [1;34m45[0m:     [1;34m# #don't know how to handle input and put it into argument slots[0m
+    [1;34m46[0m: [32mend[0m
+
