@@ -1,12 +1,23 @@
-require_relative '../app/models/cone.rb'
-require_relative '../app/models/delivery_person.rb'
-require_relative '../app/models/ice_cream.rb'
-require_relative '../app/models/order.rb'
-require_relative '../app/models/user.rb'
+# require "bundler/setup"
+# Bundler.require
+# require "sinatra/activerecord"
+# require "ostruct"
+# require "date"
+# require_all 'app/models'
+# require_all 'db/migrate'
 
-require 'bundler'
+# ENV["SINATRA_ENV"] ||= 'development'
+# ActiveRecord::Base.establish_connection(ENV["SINATRA_ENV"].to_sym)
+
+require 'bundler/setup'
 Bundler.require
 
-ActiveRecord::Base.logger = nil
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
-require_all 'lib'
+ActiveRecord::Base.establish_connection(
+  :adapter => 'sqlite3',
+  :database => "db/development.db"
+)
+
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+# ActiveRecord::Base.logger = nil
+
+require_all 'app'
