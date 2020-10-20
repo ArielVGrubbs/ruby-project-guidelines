@@ -12,6 +12,29 @@
 
 ActiveRecord::Schema.define(version: 2020_10_20_162425) do
 
+  create_table "cones", force: :cascade do |t|
+    t.integer "order_id"
+    t.integer "ice_cream_id"
+    t.string "toppings"
+  end
+
+  create_table "delivery_people", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "ice_creams", force: :cascade do |t|
+    t.string "name"
+    t.string "flavor"
+    t.string "calories"
+    t.string "price"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "delivery_person_id"
+    t.integer "num_of_cones"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username"
   end
