@@ -1,29 +1,40 @@
+require 
+
 class AppCLI
     def self.welcome_user
-        print "Welcome to Lactose Intolerant Suicide!"
+        print "Welcome to ICone!\n"
         # obviously we should change the name, maybe do some aski art like the Bake My Day example
     end
 
-    def order?
-        # print "Would you like to place an order?(y/n)\n"
-        # gets.chomp
-        # if gets.chomp == y
-
-        #     ordering
-        # elsif gets.chomp == n
-        #     exit_user
-        #     #exit the application
-        # else
-        #     print "I'm sorry, I don't quite understand, could you try that again?"
-        #     order?
-        # end
+    def self.order?
+        print "Would you like to place an order?(yes/no)\n"
+        input = gets.chomp
+        if input == "yes"
+            # print "Yay! wait a sec\n"
+            sign_in
+        elsif input == "no"
+            print "Okay, I'll send you out now.\n"
+            # exit_user
+            #exit the application
+        else
+            print "Sorry, I didn't understand that, could you try again?\n"
+            order?
+        end
     end
 
-    def sign_in
-        # print "Please enter your username:\n"
-        # gets.chomp
-        # @user = User.find_by(username: value)
+    def self.sign_in
+        print "Please enter your username:\n"
+        i1 = gets.chomp
+        if i1 != nil
+            puts "We're here!"
+            # @user = User.create(username: i1)
+        else
+            print "Sorry, I didn't understand that, could you try again?\n"
+            self.sign_in
+        end
         # print "Street address you want your order to be delivered to:\n"
+        # i2 = gets.chomp
+        # if i2
 
         # print "Method of payment:\n Visa\n MasterCard\n AmericanExpress\n"
         # USER.method_of_payment = gets.chomp
@@ -53,8 +64,8 @@ class AppCLI
         # user = User.create
 
 
-        # welcome_user
-        # order?
+        welcome_user
+        order?
         # sign_in
         # receipt
         # exit_user
