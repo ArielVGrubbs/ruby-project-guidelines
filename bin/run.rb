@@ -1,20 +1,18 @@
-require 
+require_relative '../config/environment'
 
 class AppCLI
     def self.welcome_user
-        print "Welcome to ICone!\n"
-        # obviously we should change the name, maybe do some aski art like the Bake My Day example
+        print "Welcome to Icy Cone!\n"
+        order?
     end
 
     def self.order?
         print "Would you like to place an order?(yes/no)\n"
         input = gets.chomp
         if input == "yes"
-            # print "Yay! wait a sec\n"
             sign_in
         elsif input == "no"
             print "Okay, I'll send you out now.\n"
-            # exit_user
             #exit the application
         else
             print "Sorry, I didn't understand that, could you try again?\n"
@@ -27,52 +25,65 @@ class AppCLI
         i1 = gets.chomp
         if i1 != nil
             puts "We're here!"
-            # @user = User.create(username: i1)
+            @user = User.create(username: i1)
         else
             print "Sorry, I didn't understand that, could you try again?\n"
-            self.sign_in
+            sign_in
         end
-        # print "Street address you want your order to be delivered to:\n"
-        # i2 = gets.chomp
-        # if i2
-
-        # print "Method of payment:\n Visa\n MasterCard\n AmericanExpress\n"
-        # USER.method_of_payment = gets.chomp
+        print "Street address you want your order to be delivered to:\n"
+        i2 = gets.chomp
+        @user.address = i2
+        print "Method of payment:\n Visa\n MasterCard\n AmericanExpress\n"
+        i3 = gets.chomp
+        puts "Finished with the sign in"
+        @user.payment_method = i3
+        order_create
         # #don't know how to handle input and put it into argument slots
     end
 
-    def ordering
+    def self.order_create
         #put in all the ice creams that we have, with a row from the ice_creams table for each with their flavors, calories, and price
-        # @user_order = []
-        # ice_creams.map do |ice_cream|
-        #     puts "#{ice_cream.name}\n"
-        #     puts "#whole row"
-        # end
-        # @user_order << gets.chomp
-        # print "Thank you for ordering! Your #{gets.chomp} will arrive at your door soon!"
+        @order = Order.new(user_id: @user.id)
+        ordering
+    end
+
+    def ordering
+        print "Here are all our flavors:\n"
+        IceCream.all.each {|row| print "#{row.name} | #{row.flavor} | #{row.calories} | #{row.price}\n"}
+        print "Which would you like?\n"
+        @order.cones << IceCream.find_by(name: gets.chomp)
+        print "Would you like to add to your order?(yes/no)"
+        input = gets.chomp
+        if input == "yes"
+            ordering
+        else
+            receipt
+        end
     end
 
     def receipt
-        # print "Here is your order:\n #{Ice_Cream.find_by(name: @user_order)}"
+        print "Here is your order:\n #{@order.cones}\n Have an Amazing day!"
     end
 
-    def exit_user
-        # print "Goodbye #{@user}, and thank you for shopping with (Placeholder name)!"
-    end
+    # def exit_user
+    #     # print "Goodbye #{@user}, and thank you for shopping with (Placeholder name)!"
+    # end
   
-    def self.run
-        # user = User.create
+    # def self.run
+    #     # user = User.create
 
 
-        welcome_user
-        order?
-        # sign_in
-        # receipt
-        # exit_user
-    end
+    #     welcome_user
+    #     # order?
+    #     # sign_in
+
+    #     # receipt
+    #     # exit_user
+    # end
 end
-
-AppCLI.run
+# run
+AppCLI.welcome_user
+# User.destroy_all
 
 #welcome user message
     #gives option for whether or not to order

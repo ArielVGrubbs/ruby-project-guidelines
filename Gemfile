@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "rspec"
-gem "activerecord"#, :require => 'active_record'
+gem "activerecord"
 gem "sinatra-activerecord"
 gem "sqlite3"
 gem "rake" 

@@ -1,6 +1,5 @@
 class IceCream < ActiveRecord::Base
-    has_many :cones
-    has_many :orders, through: :cones
+    has_many :orders
     has_many :users, through: :orders
 
     # @@possible_toppings = ["Sprinkles", "Chocolate Syrup", "Gummy Bears", "Reeses Cup Crumble", "M&Ms", "Caramel Syrup", "Gummy Worms", "Strawberry Syrup"]
