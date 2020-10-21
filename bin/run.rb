@@ -70,10 +70,11 @@ class AppCLI
 
     def self.receipt
         print "Here is your order:\n #{@order.cones}\n Have an Amazing day!"
+        #remember to code a randomiser for which delivery person they get assigned and to let them know who it is!
     end
 end
 # run
-AppCLI.welcome_user
+# AppCLI.welcome_user
 # User.destroy_all
 
 #welcome user message
