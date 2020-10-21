@@ -8,14 +8,8 @@ class AppCLI
         a = Artii::Base.new(:font => 'slant')
         puts a.asciify("Icy Cone!").colorize(:blue) 
         print"\n"
-        # print "Welcome to Icy Cone!\n"
-        # ice_cream_cone
         order?
         puts "Goodbye!\n".colorize(:blue)
-        # if order? == "Exit"
-        #     return "Goodbye"
-        # end
-        #Try setting up an if statement to test the return value
     end
 
     def self.order?
@@ -31,22 +25,7 @@ class AppCLI
 
         if user_input == "No."
             print "Okay, I'll send you out. Have a good day!".colorize(:blue)
-            # return "Exit"
         end
-
-        # print "Would you like to place an order?(yes/no)\n"
-        # input = gets.chomp
-        # if input == "yes"
-        #     print "Hit this flag if yes works correctly.\n"
-        #     sign_in
-        # elsif input == "no"
-        #     print "Okay, I'll send you out now.\n"
-        #     return "You're finally out!"
-        #     #exit the application
-        # else
-        #     print "Sorry, I didn't understand that, could you try again?\n"
-        #     order?
-        # end
     end
 
     def self.sign_in
@@ -59,22 +38,6 @@ class AppCLI
             @user = User.find_by(username: i1)
             order_create
         end
-        # if i1 != nil
-        #     # puts "We're here!"
-        #     @user = User.create(username: i1)
-        # else
-        #     print "Sorry, I didn't understand that, could you try again?\n"
-        #     sign_in
-        # end
-        # print "Street address you want your order to be delivered to:\n"
-        # i2 = gets.chomp
-        # @user.address = i2
-        # print "Method of payment:\n Visa\n MasterCard\n AmericanExpress\n"
-        # i3 = gets.chomp
-        # puts "Finished with the sign in"
-        # @user.payment_method = i3
-        # order_create
-        # #don't know how to handle input and put it into argument slots
     end
 
     def self.user_creation
@@ -137,20 +100,48 @@ class AppCLI
         end
         if user_input2 == "No"
             print "\n"
-            receipt
+            time_window
         end
-        # print "Would you like to add to your order?(yes/no)\n"
-        # input = gets.chomp
-        # if input == "yes"
-        #     ordering
-        # end
-        # if input == "no"
-        #     receipt
-        # end
+    end
+
+    def self.time_window
+        time_windows = ["6:00-10:00", "10:00-12:00", "12:00-2:00", "2:00-4:00", "4:00-8:00"]
+        if Time.now.hour > 10
+            @current_time_windows = time_windows.values_at(1, 2, 3, 4)
+        end
+        if Time.now.hour > 12
+            @current_time_windows = time_windows.values_at(2, 3, 4)
+        end
+        if Time.now.hour > 14
+            @current_time_windows = time_windows.values_at(3, 4)
+        end
+        if Time.now.hour > 16
+            @current_time_windows = time_windows.values_at(4)
+        end
+        if Time.now.hour > 20
+            @current_time_windows = "Sorry, we've stopped delivering for the day, you can order tomorrow or come to the store to pick up your order"
+            @chosen_time_window = "Sorry, it's too late for us to deliver, so you'll have to come pick up your order."
+        end 
+        if @current_time_windows != "Sorry, we've stopped delivering for the day, you can order tomorrow or come to the store to pick up your order"
+            prompt = TTY::Prompt.new()
+            @chosen_time_window = prompt.select("Please select a time you would like your delicious ice cream to be delivered:", [
+                @current_time_windows
+            ])
+        end
+        rewards
+    end
+
+    def self.rewards
+        rewards = @user.orders.all.size
+        if rewards > 3
+        @customer_message = "CONGRATULATIONS YOU'RE A GREAT CUSTOMER! And you're entitled to half off your next order!"
+        else
+        @customer_message = "You've made #{rewards} orders almost enough to be a good customer."
+        end
+        receipt
     end
 
     def self.receipt
-        # binding.pry
         names_array = @order.cones.map {|cone| cone.name}
         names = names_array.join(", ")
         total = 0
@@ -159,31 +150,77 @@ class AppCLI
         print "#{names}\n"
         print "And that'll cost a total of: ".colorize(:blue)
         print "$#{total}\n"
-        print "Our amazing delivery person, #{@order.delivery_person.name}, will be delivering that soon!\n".colorize(:blue)
+        if @chosen_time_window != "Sorry, it's too late for us to deliver, so you'll have to come pick up your order."
+            print "Our amazing delivery person, #{@order.delivery_person.name}, will be delivering that around #{@chosen_time_window}.\n".colorize(:blue)
+        else
+            print "Sorry, it's too late for us to deliver, so you'll have to come pick up your order.".colorize(:blue)
+        end
+        print "#{@customer_message}\n".colorize(:blue)
         print "Have an Amazing day!\n".colorize(:blue)
         gets.chomp
-        #remember to code a randomiser for which delivery person they get assigned and to let them know who it is!
     end
 
-#     def self.ice_cream_cone
-#         print "
-#           _.-._                    .-._                    .-._                    .-._                    .-._         
-#         ,'/ // )                 ,'/ //)                 ,'/ //)                 ,'/ //)                 ,'/ //)         
-#        /// // /)               /// // /)               /// // /)               /// // /)               /// // /)        
-#       /// // //|              /// // //|              /// // //|              /// // //|              /// // //|        
-#      /// // ///              /// // ///              /// // ///              /// // ///              /// // ///         
-#     /// // ///              /// // ///              /// // ///              /// // ///              /// // ///          
-#    (`: // ///              (`: // ///              (`: // ///              (`: // ///              (`: // ///           
-#     `;`: ///                `;`: ///                `;`: ///                `;`: ///                `;`: ///            
-#     / /:`:/                 / /:`:/                 / /:`:/                 / /:`:/                 / /:`:/             
-#    / /  `'                 / /  `'                 / /  `'                 / /  `'                 / /  `'              
-#   / /                     / /                     / /                     / /                     / /                   
-#  (_/                     (_/                     (_/                     (_/                     (_/                    \n".colorize(:blue)
-#     end
+    def self.ice_cream_cone
+        print "
+                      ###
+                 ## # # # # ###
+                #            # ##
+              ##  ##    /     # ##
+             #  ## # #          # #
+             # #######          # ##
+             ####     #  /      # # #
+             ##      #       /  # # ##
+               #   ##          # #  ##
+                ###      /    #  # ####
+              ###             X  X #####
+          ####     /       # /  # ####X####
+         #  /          /  #  # # ##X###    ##
+         #         X   #   #  #X###       ## #
+        # ### X## ## # # ##X#####       # # ###
+       # #  # ### ###X### #       /   #  # #####
+     ##  /          /         /     #  # #######
+     #        /         /        #    # #######
+     #  /              #    #     #  ####### #
+     #  #   #   #  #  #  #   # ###### # #     ###
+     ## ###  ###  # # ### ### # #/        /    # ##
+   ##   ### ##### ### ####  #  /             #  # ###
+  #              # ## #              /     #   # # ###
+  #    /         /            /          #   # # #####
+  #         /        /             /   #   #  ## ######
+ ##        /                 /    #     #  ## #######
+  #   /              /        #     # ### ####### ##
+  ##  ##     #   /     # #   #  #### ##### ##### ###
+  ###### # #### ## # # # # ####### ##### ######### #
+   #  X # #  ##########################   ## #X # #
+   #       ###  #         # ##  #          ### #  #
+    #       ##      #     # ###     #     # # #  #
+    #       ## #          # ##  #         ###  # #
+     #X#X / ## X  /X # X / X # X// X # X/  # #X  #
+     #X / #X##  /  #X#/ / /# ##  / ##X  / /###   #
+      # ### X / X ##X / X## X / X #X# / X# #X# #
+       #X###X###X###X###X###X###X###X#######X##
+       ##X# # X## ### ###X###XX #X# #X# # ###X#
+       ###      ###X    ###X#     #X###    ####
+       #XX# X ##X ##X # ##### # X####XX X ##X##
+        #X###X###X###X###X###X###X###X###X###X 
+        # ###XX X X #X#XX X X #X#XX X X#X##X##
+        #X   X    ##X# X#    #  #X   ###   X##
+        # # X X##X#XX X X #X#XX X X##X# X # ##
+        ## # ##X X #   # #### #  #### #X # ###
+         #X###X X X X X###XXX X X## X X X ###
+         ##X## X # ####X # X X X### X X #X ##
+          X # X X#### X # X X ###XX X X # X##
+           X X #X#X X ## X XX#X# X X # ### #
+          ##X###X X X X ###X# X X X ##X X X#
+          ###### # X X## X X X # ##X X X X #
+          # X X X ###X# X X X X##X# X X X###
+          #### X X#X ### X X X#X#  X # X X#
+              ##########################            \n".colorize(:blue)
+    welcome_user
+    end
 end
-# run
-AppCLI.welcome_user
-# User.destroy_all
+
+AppCLI.ice_cream_cone
 
 #welcome user message
     #gives option for whether or not to order
@@ -207,9 +244,7 @@ AppCLI.welcome_user
             #create an order
         #no will take you to a confirmation method
             #confirmation method will allow you to either exit the program or go back to welcome message
-
-
-
-
-
-
+#Original features:
+    #Time window thing
+    #Award system
+    #
