@@ -60,6 +60,7 @@ class AppCLI
                 "Discover"
             ])
             @user.payment_method = user_input2
+            @user.save
             order_create
         end
 
@@ -71,8 +72,8 @@ class AppCLI
     def self.order_create
         @order = Order.create(user_id: @user.id)
         @order.delivery_person_id = rand(1..3)
-        @order.save
         @order.cones_create
+        @order.save
         ordering
     end
 
@@ -105,18 +106,18 @@ class AppCLI
     end
 
     def self.time_window
-        time_windows = ["6:00-10:00", "10:00-12:00", "12:00-2:00", "2:00-4:00", "4:00-8:00"]
+        @current_time_windows = ["6:00-10:00", "10:00-12:00", "12:00-2:00", "2:00-4:00", "4:00-8:00"]
         if Time.now.hour > 10
-            @current_time_windows = time_windows.values_at(1, 2, 3, 4)
+            @current_time_windows = @current_time_windows.values_at(1, 2, 3, 4)
         end
         if Time.now.hour > 12
-            @current_time_windows = time_windows.values_at(2, 3, 4)
+            @current_time_windows = @current_time_windows.values_at(2, 3, 4)
         end
         if Time.now.hour > 14
-            @current_time_windows = time_windows.values_at(3, 4)
+            @current_time_windows = @current_time_windows.values_at(3, 4)
         end
         if Time.now.hour > 16
-            @current_time_windows = time_windows.values_at(4)
+            @current_time_windows = @current_time_windows.values_at(4)
         end
         if Time.now.hour > 20
             @current_time_windows = "Sorry, we've stopped delivering for the day, you can order tomorrow or come to the store to pick up your order"
@@ -128,15 +129,158 @@ class AppCLI
                 @current_time_windows
             ])
         end
+        # rewards
+        # special_requests?
+        choose_driver
+    end
+
+    def self.choose_driver
+        print "Here are our amazing delivery drivers."
+        prompt = TTY::Prompt.new()
+        user_input = prompt.select("Take your pick", [
+            "Yoel",
+            "Sanny",
+            "Jordan",
+            "Learn more"
+        ])
+        if user_input == "Yoel"
+            print "\n"
+            @order.delivery_person = DeliveryPerson.find_by(name: "Yoel")
+        end
+        if user_input == "Sanny"
+            print "\n"
+            @order.delivery_person = DeliveryPerson.find_by(name:"Sanny")
+        end
+        if user_input == "Jordan"
+            print "\n"
+            @order.delivery_person = DeliveryPerson.find_by(name: "Jordan")
+        end
+        if user_input == "Learn more"
+            print "\n"
+            learn_more
+        end
+        special_requests?
+    end
+    
+    def self.learn_more
+        print "Time to learn.\n"
+        prompt = TTY::Prompt.new()
+        user_input = prompt.select("Who would you like to learn more about?", [
+            "Yoel",
+            "Sanny",
+            "Jordan",
+            "Choose driver"        
+        ])
+        if user_input == "Yoel"
+            print "\n"
+            yoel
+        end
+        if user_input == "Sanny"
+            print "\n"
+            sanny
+        end
+        if user_input == "Jordan"
+            print "\n"
+            jordan
+        end
+        if user_input == "Choose driver"
+            print "\n"
+            choose_driver
+        end
+    
+    end
+    
+    def self.yoel
+        print "Yoel is amazing"
+        prompt = TTY::Prompt.new()
+        user_input = prompt.select("Would You like to learn more or choose your driver", [
+            "learn more",
+            "Choose driver"        
+        ])
+            
+        if user_input == "learn more"
+            print "\n"
+            learn_more
+        end
+        if user_input == "Choose driver"
+            print "\n"
+             choose_driver
+        end
+    
+    end
+    
+    def self.sanny
+        print "Sanny is amazing"
+        prompt = TTY::Prompt.new()
+        user_input = prompt.select("Would You like to learn more or choose your driver", [
+            "learn more",
+            "Choose driver"        
+        ])
+        if user_input == "learn more"
+            print "\n"
+            learn_more
+        end
+        if user_input == "Choose driver"
+            print "\n"
+            choose_driver
+        end
+    end
+    
+    def self.jordan
+        print "Jordan is amazing"
+        prompt = TTY::Prompt.new()
+        user_input = prompt.select("Would You like to learn more or choose your driver", [
+             "learn more",
+            "Choose driver"        
+        ])
+        if user_input == "learn more"
+            print "\n"
+            learn_more
+        end
+        if user_input == "Choose driver"
+            print "\n"
+            choose_driver
+        end
+    end
+
+    def self.special_requests?
+        prompt = TTY::Prompt.new()
+        user_input = prompt.select("Do you have any special requests for your delivery person, #{@order.delivery_person.name}?".colorize(:blue), [
+            "Yes",
+            "No"
+        ])
+        if user_input == "Yes"
+            special_request
+        end
+        if user_input == "No"
+            rewards
+        end
+    end
+
+    def self.special_request
+        print "Please type in a custom message with your request and it will be given to your delivery person.\n"
+        @special_request = gets.chomp
         rewards
     end
 
     def self.rewards
         rewards = @user.orders.all.size
-        if rewards > 3
-        @customer_message = "CONGRATULATIONS YOU'RE A GREAT CUSTOMER! And you're entitled to half off your next order!"
+        if rewards == 3
+            @customer_message = "CONGRATULATIONS YOU'RE A GREAT CUSTOMER! And you're entitled to ten percent off your next order!"
         else
-        @customer_message = "You've made #{rewards} orders almost enough to be a good customer."
+            @customer_message = "You've made #{rewards} orders almost enough to be a good customer."
+        end
+        if rewards == 4
+            @customer_message = "Thank you for being such a great customer, as thanks from our team here, you get ten percent off this order."
+        end
+        total_calculator
+    end
+
+    def self.total_calculator
+        @total = 0
+        @order.cones.each {|cone| @total += cone.price}
+        if @customer_message == "Thank you for being such a great customer, as thanks from our team here, you get ten percent off this order."
+            @total = @total * 0.9
         end
         receipt
     end
@@ -144,33 +288,34 @@ class AppCLI
     def self.receipt
         names_array = @order.cones.map {|cone| cone.name}
         names = names_array.join(", ")
-        total = 0
-        @order.cones.each {|cone| total += cone.price}
         print "Here is your order: ".colorize(:blue)
         print "#{names}\n"
         print "And that'll cost a total of: ".colorize(:blue)
-        print "$#{total}\n"
+        print "$#{@total}\n"
         if @chosen_time_window != "Sorry, it's too late for us to deliver, so you'll have to come pick up your order."
-            print "Our amazing delivery person, #{@order.delivery_person.name}, will be delivering that around #{@chosen_time_window}.\n".colorize(:blue)
+            print "Our amazing delivery person, #{@order.delivery_person.name}, will be delivering that to #{@user.address}, at around #{@chosen_time_window}.\n".colorize(:blue)
         else
             print "Sorry, it's too late for us to deliver, so you'll have to come pick up your order.".colorize(:blue)
+        end
+        if @special_request != nil
+            print "#{@order.delivery_person.name} will be sure to fufill your special request:".colorize(:blue) + " #{@special_request}\n"
         end
         print "#{@customer_message}\n".colorize(:blue)
         print "Have an Amazing day!\n".colorize(:blue)
         gets.chomp
     end
-
+    
     def self.ice_cream_cone
         print "
-                      ###
-                 ## # # # # ###
+                    #######
+                 ##         ###
                 #            # ##
               ##  ##    /     # ##
              #  ## # #          # #
              # #######          # ##
-             ####     #  /      # # #
-             ##      #       /  # # ##
-               #   ##          # #  ##
+             ####     #  /      #  ##
+             ##      #       /  #  # #
+               #   ##          #  # ##
                 ###      /    #  # ####
               ###             X  X #####
           ####     /       # /  # ####X####
@@ -198,7 +343,6 @@ class AppCLI
      #X#X / ## X  /X # X / X # X// X # X/  # #X  #
      #X / #X##  /  #X#/ / /# ##  / ##X  / /###   #
       # ### X / X ##X / X## X / X #X# / X# #X# #
-       #X###X###X###X###X###X###X###X#######X##
        ##X# # X## ### ###X###XX #X# #X# # ###X#
        ###      ###X    ###X#     #X###    ####
        #XX# X ##X ##X # ##### # X####XX X ##X##
@@ -209,11 +353,6 @@ class AppCLI
         ## # ##X X #   # #### #  #### #X # ###
          #X###X X X X X###XXX X X## X X X ###
          ##X## X # ####X # X X X### X X #X ##
-          X # X X#### X # X X ###XX X X # X##
-           X X #X#X X ## X XX#X# X X # ### #
-          ##X###X X X X ###X# X X X ##X X X#
-          ###### # X X## X X X # ##X X X X #
-          # X X X ###X# X X X X##X# X X X###
           #### X X#X ### X X X#X#  X # X X#
               ##########################            \n".colorize(:blue)
     welcome_user
@@ -247,4 +386,6 @@ AppCLI.ice_cream_cone
 #Original features:
     #Time window thing
     #Award system
-    #
+    #Allow user the option to pick their delivery person
+    #Let the user create a special request that is then added to the receipt at the end, 
+    #   maybe even interupting the punctuation of another method if the special request exists

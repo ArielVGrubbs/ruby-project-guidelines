@@ -1,23 +1,10 @@
-# Module One Final Project Guidelines
+# Phase One Final Project - Ariel Grubbs and Hugo Delgado
 
-Congratulations, you're at the end of module one! You've worked crazy hard to get here and have learned a ton.
+(Something here)
 
-For your final project, we'll be building a Command Line database application.
+## Project Requirements (i.e. what we set out ot do)
 
-## Project Requirements
-
-### Option One - Data Analytics Project
-
-1. Access a Sqlite3 Database using ActiveRecord.
-2. You should have at minimum three models including one join model. This means you must have a many-to-many relationship.
-3. You should seed your database using data that you collect either from a CSV, a website by scraping, or an API.
-4. Your models should have methods that answer interesting questions about the data. For example, if you've collected info about movie reviews, what is the most popular movie? What movie has the most reviews?
-5. You should provide a CLI to display the return values of your interesting methods.  
-6. Use good OO design patterns. You should have separate classes for your models and CLI interface.
-
-  **Resource:** [Easy Access APIs](https://github.com/learn-co-curriculum/easy-access-apis)
-
-### Option Two - Command Line CRUD App
+### Command Line CRUD App
 
 1. Access a Sqlite3 Database using ActiveRecord.
 2. You should have a minimum of three models.
@@ -26,34 +13,31 @@ For your final project, we'll be building a Command Line database application.
 
 ### Brainstorming and Proposing a Project Idea
 
-Projects need to be approved prior to launching into them, so take some time to brainstorm project options that will fulfill the requirements above.  You must have a minimum of four [user stories](https://en.wikipedia.org/wiki/User_story) to help explain how a user will interact with your app.  A user story should follow the general structure of `"As a <role>, I want <goal/desire> so that <benefit>"`. For example, if we were creating an app to randomly choose nearby restaurants on Yelp, we might write:
+We started off by brainstorming about what we wanted our project to be, what we would like to model off of real world applicaitons and what we'd like ot add that we've not seen before. We settled on creating an online ordering system for an ice cream store when Hugo told me a story about how he went to a cute frozen yogurt place, but although he enjoyed the trip, he wished they had an app for ordering ice cream to be delivered to his house. And just like that we had an idea about what to do, and the kind of features we wanted it to have.
 
-* As a user, I want to be able to enter my name to retrieve my records
-* As a user, I want to enter a location and be given a random nearby restaurant suggestion
-* As a user, I should be able to reject a suggestion and not see that restaurant suggestion again
-* As a user, I want to be able to save to and retrieve a list of favorite restaurant suggestions
+* A user should be able to order more than one ice cream cone per order
+* A user should be able to gain rewards for repeated patronage of this restaurant
+* A user should be able to choose when they'd like their ice cream to be delivered
+* A user should be able to see who their delivery person is and learn a little bit about them
 
-## Instructions
+## Code
 
-1. Fork and clone this repository.
-2. Build your application. Make sure to commit early and commit often. Commit messages should be meaningful (clearly describe what you're doing in the commit) and accurate (there should be nothing in the commit that doesn't match the description in the commit message). Good rule of thumb is to commit every 3-7 mins of actual coding time. Most of your commits should have under 15 lines of code and a 2 line commit is perfectly acceptable.
-3. Make sure to create a good README.md with a short description, install instructions, a contributor's guide and a link to the license for your code.
-4. Make sure your project checks off each of the above requirements.
-5. Prepare a video demo (narration helps!) describing how a user would interact with your working project.
-    * The video should:
-      - Have an overview of your project. (2 minutes max)
-6. Prepare a presentation to follow your video. (3 minutes max)
-    * Your presentation should:
-      - Describe something you struggled to build, and show us how you ultimately implemented it in your code.
-      - Discuss 3 things you learned in the process of working on this project.
-      - Address what, if anything, you would change or add to what you have today.
-      - Present any code you would like to highlight.   
-7. *OPTIONAL, BUT RECOMMENDED*: Write a blog post about the project and process.
+Now I'm going to start talking the nitty gritty details of the code, don't say I didn't warn you.
 
----
-### Common Questions:
-- How do I turn off my SQL logger?
-```ruby
-# in config/environment.rb add this line:
-ActiveRecord::Base.logger = nil
-```
+I'll mainly focus this discussion on the CLI (Command Line Interface), since that was the main focus of this project.
+
+Our CLI is all contianed within one class that we wrote in the bin/run.rb file, and all you need to do to start going through the path of the user is run that file. We started off with a very basic, very linear, path that used the responses the user typed to move through a sequence of complicated If statements that allowed the user to pick one of our ice cream options, and if the user misspelled the whole thing would break and the code would kick the user out prematurely.
+
+Then we moved on to adding features to enrich the users experience, we created two more columns in the users table in our database with a migration, and set up a prompt for the user to input their address and method of payment, but we still weren't using that data in any way, and though we didn't realize it immediately, we weren't even saving that data to the database. Later on we added a bit of text to what the receipt method printed at the end of the user path, showing that the system had saved the users address and that was where it would send the delivery person.
+
+We added the time window mechanic, that checked the current time that the user was running the program and gave the user a list of possible delivery time windows after that current time for them to choose from, and once again the receipt method would print something to show them that we had saved when that data.
+
+Then we thought, it might be nice to be able ot choose a delivery person, rather than just having one randomly assigned so we set up a method that allowed the user to, if they wanted to, diverge from the main path for a time and check out some interesting information about our delivery people and let them select one of them to deliver their ice cream. Adding in this bit of functionality allowed our program to have more of a branching structure, and made it less linear and hopefully makes the user feel like they're driving the process without allowing them to break out of the safe code path.
+
+We of course swung back around to working on our main path, giving the customer a little more information in the list of ice creams, and allowing them to add multiple cones ot a single order by writing an if statement that only called the ordering method again if the user wanted to add more ice cream to their order.
+
+Adding the rewards system was fairly easy, and all we had to do was set up a method that read the number of orders made by that user instance, and if that number was larger than a predefined threshold they would get a discount on their next order, shown to them by a bit of text in the receipt before they get the discount, and also being deducted from the sum in their next order. For the sake of easily presenting this feature we set the threshold of number of orders the user needs to make fairly low, but in a real world environment I imagine it would be more like 15-20 previous orders gets you a free one, rather than our somewhat generous, three order gets you ten percent off on the fourth. In adding this feature we also needed to clean up some of our code to better adhere to best practices, as before we implemented this, our total for the order was calculated inside the receipt method, which is generally not a good idea because you don't want a method or function to be doing more than one clearly delineated task.
+
+## Reflections
+
+This was an amazing and exciting project, working together to create a CLI for the first time was a very rewarding learning experience. The open ended nature of this assignment gave us the freedom to do anything while simultaneously giving us the responsibility of building our own funcional coding environment from scratch, and that forced both of us to grow as coders. We're very thankful to have been given this opportunity, and know that we've grown to meet this challenge. But none of this would have been possible without the great community of Flatiron, the members of our cohort and our instructors were always there to help us if we hit a block, or needed a fresh set of eyes on the project and we can't thank them enough for all their help.
