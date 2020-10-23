@@ -1,7 +1,5 @@
 # Phase One Final Project - Ariel Grubbs and Hugo Delgado
 
-(Something here)
-
 ## Project Requirements (i.e. what we set out ot do)
 
 ### Command Line CRUD App
@@ -29,8 +27,6 @@ I'll mainly focus this discussion on the CLI (Command Line Interface), since tha
 Our CLI is all contianed within one class that we wrote in the bin/run.rb file, and all you need to do to start going through the path of the user is run that file. We started off with a very basic, very linear, path that used the responses the user typed to move through a sequence of complicated If statements that allowed the user to pick one of our ice cream options, and if the user misspelled the whole thing would break and the code would kick the user out prematurely.
 
 Then we moved on to adding features to enrich the users experience, we created two more columns in the users table in our database with a migration, and set up a prompt for the user to input their address and method of payment, but we still weren't using that data in any way, and though we didn't realize it immediately, we weren't even saving that data to the database. Later on we added a bit of text to what the receipt method printed at the end of the user path, showing that the system had saved the users address and that was where it would send the delivery person.
-
-We added the time window mechanic, that checked the current time that the user was running the program and gave the user a list of possible delivery time windows after that current time for them to choose from, and once again the receipt method would print something to show them that we had saved when that data.
 
 Then we thought, it might be nice to be able ot choose a delivery person, rather than just having one randomly assigned so we set up a method that allowed the user to, if they wanted to, diverge from the main path for a time and check out some interesting information about our delivery people and let them select one of them to deliver their ice cream. Adding in this bit of functionality allowed our program to have more of a branching structure, and made it less linear and hopefully makes the user feel like they're driving the process without allowing them to break out of the safe code path.
 
